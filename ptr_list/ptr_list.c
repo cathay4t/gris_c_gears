@@ -117,3 +117,27 @@ void ptr_list_free(struct pointer_list *ptr_list)
 
     free(ptr_list);
 }
+
+void ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
+                      uint32_t *count)
+{
+    uint32_t i = 0;
+    void *data = NULL;
+
+    if ((ptr_list == NULL) || (array == NULL) || (count == NULL))
+        return;
+
+    *array = NULL;
+    *count = ptr_list_len(ptr_list);
+    if (*count == 0)
+        return;
+
+    *array = (void **) malloc(sizeof(void *) * (*count));
+    if (*array == NULL)
+        exit(EXIT_FAILURE);
+
+    ptr_list_for_each(ptr_list, i, data) {
+        (*array)[i] = data;
+    }
+    return;
+}

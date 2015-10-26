@@ -33,6 +33,9 @@ void *ptr_list_index(struct pointer_list *ptr_list, uint32_t index);
 
 void ptr_list_free(struct pointer_list *ptr_list);
 
+void ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
+                      uint32_t *count);
+
 #define ptr_list_for_each(l, i, d) \
      for ((i) = 0; \
           (l) && (i) < ptr_list_len((l)) && ((d) = ptr_list_index((l), (i))); \
