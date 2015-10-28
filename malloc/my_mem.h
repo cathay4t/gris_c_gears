@@ -21,14 +21,13 @@
 
 #include <stdlib.h>
 
-static void *_malloc_or_die(size_t size, const char *file_path, int line_num);
+void *_malloc_or_die(size_t size, const char *file_path, int line_num);
 
 #define malloc_or_die(n) _malloc_or_die((n), __FILE__, __LINE__)
 
-static char *_strdup_or_die(const char *str, const char *file_path,
-                            int line_num);
+char *_strdup_or_die(const char *str, const char *file_path, int line_num);
 
-#define strdup_or_die(c) _strdup_or_dir((n), __FILE__, __LINE__)
+#define strdup_or_die(c) _strdup_or_die((c), __FILE__, __LINE__)
 
 #define free_if_not_null(p) {if ((p) != NULL) free((p));}
 
