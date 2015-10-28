@@ -16,8 +16,8 @@
  * Author: Gris Ge <fge@redhat.com>
  */
 
-#ifndef _LIBHPSA_SES_PTR_LIST_H_
-#define _LIBHPSA_SES_PTR_LIST_H_
+#ifndef _PTR_LIST_H_
+#define _PTR_LIST_H_
 
 #include <stdint.h>
 
@@ -41,4 +41,4 @@ void ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
           (l) && (i) < ptr_list_len((l)) && ((d) = ptr_list_index((l), (i))); \
           ++(i))
 
-#endif  /* End of _LIBHPSA_SES_PTR_LIST_H_  */
+#endif  /* End of _PTR_LIST_H_  */
