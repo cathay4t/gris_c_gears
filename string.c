@@ -16,6 +16,12 @@
  * Author: Gris Ge <fge@redhat.com>
  */
 
+#define _msg_clear(x) x[0] = '\0'
+#define _msg_set(x, len, format, ...) \
+    { \
+        snprintf(x, len, format, ##__VA_ARGS__); \
+    }
+
 static char *_trim_tailling_space(char *str);
 
 static char *_trim_tailling_space(char *str) {
