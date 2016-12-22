@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <assert.h>
+#include <errno.h>
 
 struct _list_node {
 	void *data;
@@ -57,7 +58,7 @@ int _ptr_list_add(struct _pointer_list *ptr_list, void *data)
 
 	node = (struct _list_node *) malloc(sizeof(struct _list_node));
 	if (node == NULL)
-		return -1;
+		return ENOMEM;
 
 	node->data = data;
 	node->next = NULL;
@@ -137,7 +138,7 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 
 	*array = (void **) malloc(sizeof(void *) * (*count));
 	if (*array == NULL)
-		return -1;
+		return ENOMEM;
 
 	ptr_list_for_each(ptr_list, i, data) {
 		(*array)[i] = data;

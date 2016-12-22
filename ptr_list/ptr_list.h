@@ -29,7 +29,7 @@ struct _pointer_list;
 struct _pointer_list *_ptr_list_new(void);
 
 /*
- * Return -1 if no memory
+ * Return ENOMEM if no memory
  */
 int _ptr_list_add(struct _pointer_list *ptr_list, void *data);
 
@@ -40,7 +40,7 @@ void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index);
 void _ptr_list_free(struct _pointer_list *ptr_list);
 
 /*
- * Return -1 if no memory
+ * Return ENOMEM if no memory
  */
 int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 		      uint32_t *count);
