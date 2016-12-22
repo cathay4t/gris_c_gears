@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Red Hat, Inc.
+ * Copyright (C) 2016 Red Hat, Inc.
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -22,122 +22,124 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <assert.h>
 
 struct _list_node {
-    void *data;
-    void *next;
+	void *data;
+	void *next;
 };
 
 struct pointer_list {
-    struct _list_node *first_node;
-    uint32_t len;
-    struct _list_node *last_node;
+	struct _list_node *first_node;
+	uint32_t len;
+	struct _list_node *last_node;
 };
 
 struct pointer_list *ptr_list_new(void)
 {
-    struct pointer_list *ptr_list = NULL;
-    ptr_list = (struct pointer_list *) malloc(sizeof(struct pointer_list));
-    if (ptr_list == NULL)
-        exit(EXIT_FAILURE);
+	struct pointer_list *ptr_list = NULL;
+	ptr_list = (struct pointer_list *) malloc(sizeof(struct pointer_list));
+	if (ptr_list == NULL)
+		return NULL;
 
-    ptr_list->len = 0;
-    ptr_list->first_node = NULL;
-    ptr_list->last_node = NULL;
-    return ptr_list;
+	ptr_list->len = 0;
+	ptr_list->first_node = NULL;
+	ptr_list->last_node = NULL;
+	return ptr_list;
 }
 
-void ptr_list_add(struct pointer_list *ptr_list, void *data)
+int ptr_list_add(struct pointer_list *ptr_list, void *data)
 {
-    struct _list_node *node = NULL;
+	struct _list_node *node = NULL;
 
-    if (ptr_list == NULL)
-        return;
+	assert(ptr_list != NULL);
 
-    node = (struct _list_node *) malloc(sizeof(struct _list_node));
-    if (node == NULL)
-        exit(EXIT_FAILURE);
+	node = (struct _list_node *) malloc(sizeof(struct _list_node));
+	if (node == NULL)
+		return -1;
 
-    node->data = data;
-    node->next = NULL;
+	node->data = data;
+	node->next = NULL;
 
-    if (ptr_list->first_node == NULL) {
-        ptr_list->first_node = node;
-    } else {
-        ptr_list->last_node->next = node;
-    }
-    ptr_list->last_node = node;
-    ++(ptr_list->len);
+	if (ptr_list->first_node == NULL) {
+		ptr_list->first_node = node;
+	} else {
+		ptr_list->last_node->next = node;
+	}
+	ptr_list->last_node = node;
+	++(ptr_list->len);
+	return 0;
 }
 
 uint32_t ptr_list_len(struct pointer_list *ptr_list)
 {
-    if (ptr_list == NULL)
-        return 0;
-    return ptr_list->len;
+	assert(ptr_list != NULL)
+	return ptr_list->len;
 }
 
 void *ptr_list_index(struct pointer_list *ptr_list, uint32_t index)
 {
-    uint32_t i = 0;
-    struct _list_node *node;
+	uint32_t i = 0;
+	struct _list_node *node;
 
-    if ((ptr_list == NULL) || (ptr_list->len == 0) || (ptr_list->len <= index))
-        return NULL;
+	if ((ptr_list == NULL) || (ptr_list->len == 0) ||
+	    (ptr_list->len <= index))
+		return NULL;
 
-    if (index == ptr_list->len - 1)
-        return ptr_list->last_node->data;
+	if (index == ptr_list->len - 1)
+		return ptr_list->last_node->data;
 
-    node = ptr_list->first_node;
-    while((i < index) && (node != NULL)) {
-        node = (struct _list_node *) node->next;
-        ++i;
-    }
-    if (i == index)
-        return node->data;
-    return NULL;
+	node = ptr_list->first_node;
+	while((i < index) && (node != NULL)) {
+		node = (struct _list_node *) node->next;
+		++i;
+	}
+	if (i == index)
+		return node->data;
+	return NULL;
 }
 
 void ptr_list_free(struct pointer_list *ptr_list)
 {
-    struct _list_node *node = NULL;
-    struct _list_node *tmp_node = NULL;
-    uint32_t i;
+	struct _list_node *node = NULL;
+	struct _list_node *tmp_node = NULL;
+	uint32_t i;
 
-    if (ptr_list == NULL)
-        return;
+	if (ptr_list == NULL)
+		return;
 
-    node = ptr_list->first_node;
+	node = ptr_list->first_node;
 
-    while(node != NULL) {
-        tmp_node = node;
-        node = (struct _list_node *) node->next;
-        free(tmp_node);
-    }
+	while(node != NULL) {
+		tmp_node = node;
+		node = (struct _list_node *) node->next;
+		free(tmp_node);
+	}
 
-    free(ptr_list);
+	free(ptr_list);
 }
 
-void ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
-                      uint32_t *count)
+int ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
+		      uint32_t *count)
 {
-    uint32_t i = 0;
-    void *data = NULL;
+	uint32_t i = 0;
+	void *data = NULL;
 
-    if ((ptr_list == NULL) || (array == NULL) || (count == NULL))
-        return;
+	assert(ptr_list != NULL);
+	assert(array != NULL);
+	assert(count != NULL);
 
-    *array = NULL;
-    *count = ptr_list_len(ptr_list);
-    if (*count == 0)
-        return;
+	*array = NULL;
+	*count = ptr_list_len(ptr_list);
+	if (*count == 0)
+		return 0;
 
-    *array = (void **) malloc(sizeof(void *) * (*count));
-    if (*array == NULL)
-        exit(EXIT_FAILURE);
+	*array = (void **) malloc(sizeof(void *) * (*count));
+	if (*array == NULL)
+		return -1;
 
-    ptr_list_for_each(ptr_list, i, data) {
-        (*array)[i] = data;
-    }
-    return;
+	ptr_list_for_each(ptr_list, i, data) {
+		(*array)[i] = data;
+	}
+	return 0;
 }
