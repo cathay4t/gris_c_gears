@@ -21,31 +21,31 @@
 
 #include <stdint.h>
 
-struct pointer_list;
+struct _pointer_list;
 
 /*
  * Return NULL if no memory
  */
-struct pointer_list *ptr_list_new(void);
+struct _pointer_list *_ptr_list_new(void);
 
 /*
  * Return -1 if no memory
  */
-int ptr_list_add(struct pointer_list *ptr_list, void *data);
+int _ptr_list_add(struct _pointer_list *ptr_list, void *data);
 
-uint32_t ptr_list_len(struct pointer_list *ptr_list);
+uint32_t _ptr_list_len(struct _pointer_list *ptr_list);
 
-void *ptr_list_index(struct pointer_list *ptr_list, uint32_t index);
+void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index);
 
-void ptr_list_free(struct pointer_list *ptr_list);
+void _ptr_list_free(struct _pointer_list *ptr_list);
 
 /*
  * Return -1 if no memory
  */
-int ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
-		     uint32_t *count);
+int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
+		      uint32_t *count);
 
-#define ptr_list_for_each(l, i, d) \
+#define _ptr_list_for_each(l, i, d) \
 	for (i = 0; \
 	     (l != NULL) && (i < ptr_list_len(l)) && \
 	     (d = ptr_list_index(l, i)); \

@@ -29,16 +29,17 @@ struct _list_node {
 	void *next;
 };
 
-struct pointer_list {
+struct _pointer_list {
 	struct _list_node *first_node;
 	uint32_t len;
 	struct _list_node *last_node;
 };
 
-struct pointer_list *ptr_list_new(void)
+struct _pointer_list *ptr_list_new(void)
 {
-	struct pointer_list *ptr_list = NULL;
-	ptr_list = (struct pointer_list *) malloc(sizeof(struct pointer_list));
+	struct _pointer_list *ptr_list = NULL;
+	ptr_list = (struct _pointer_list *)
+		malloc(sizeof(struct _pointer_list));
 	if (ptr_list == NULL)
 		return NULL;
 
@@ -48,7 +49,7 @@ struct pointer_list *ptr_list_new(void)
 	return ptr_list;
 }
 
-int ptr_list_add(struct pointer_list *ptr_list, void *data)
+int _ptr_list_add(struct _pointer_list *ptr_list, void *data)
 {
 	struct _list_node *node = NULL;
 
@@ -71,13 +72,13 @@ int ptr_list_add(struct pointer_list *ptr_list, void *data)
 	return 0;
 }
 
-uint32_t ptr_list_len(struct pointer_list *ptr_list)
+uint32_t _ptr_list_len(struct _pointer_list *ptr_list)
 {
 	assert(ptr_list != NULL)
 	return ptr_list->len;
 }
 
-void *ptr_list_index(struct pointer_list *ptr_list, uint32_t index)
+void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index)
 {
 	uint32_t i = 0;
 	struct _list_node *node;
@@ -99,7 +100,7 @@ void *ptr_list_index(struct pointer_list *ptr_list, uint32_t index)
 	return NULL;
 }
 
-void ptr_list_free(struct pointer_list *ptr_list)
+void _ptr_list_free(struct _pointer_list *ptr_list)
 {
 	struct _list_node *node = NULL;
 	struct _list_node *tmp_node = NULL;
@@ -119,7 +120,7 @@ void ptr_list_free(struct pointer_list *ptr_list)
 	free(ptr_list);
 }
 
-int ptr_list_2_array(struct pointer_list *ptr_list, void ***array,
+int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 		      uint32_t *count)
 {
 	uint32_t i = 0;
