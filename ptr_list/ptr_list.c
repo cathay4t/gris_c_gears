@@ -36,7 +36,7 @@ struct _pointer_list {
 	struct _list_node *last_node;
 };
 
-struct _pointer_list *ptr_list_new(void)
+struct _pointer_list *_ptr_list_new(void)
 {
 	struct _pointer_list *ptr_list = NULL;
 	ptr_list = (struct _pointer_list *)
@@ -75,7 +75,7 @@ int _ptr_list_add(struct _pointer_list *ptr_list, void *data)
 
 uint32_t _ptr_list_len(struct _pointer_list *ptr_list)
 {
-	assert(ptr_list != NULL)
+	assert(ptr_list != NULL);
 	return ptr_list->len;
 }
 
@@ -101,11 +101,47 @@ void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index)
 	return NULL;
 }
 
+void _ptr_list_del(struct _pointer_list *ptr_list, uint32_t index)
+{
+	uint32_t i = 0;
+	struct _list_node *pre_node = NULL;
+	struct _list_node *cur_node = NULL;
+	struct _list_node *nxt_node = NULL;
+
+	if ((ptr_list == NULL) || (ptr_list->len == 0) ||
+	    (ptr_list->len <= index))
+		return;
+
+	if (ptr_list->len == 1) {
+		free(ptr_list->first_node);
+		cur_node = ptr_list->first_node;
+		ptr_list->first_node = NULL;
+		ptr_list->last_node = NULL;
+	} else if (index == 0) {
+		cur_node = ptr_list->first_node;
+		nxt_node = cur_node->next;
+		ptr_list->first_node = nxt_node;
+	} else {
+		pre_node = ptr_list->first_node;
+		while((i < index - 1) && (pre_node != NULL)) {
+			pre_node = (struct _list_node *) pre_node->next;
+			++i;
+		}
+		assert(i == index - 1);
+		cur_node = pre_node->next;
+		nxt_node = cur_node->next;
+		pre_node->next = nxt_node;
+	}
+
+	free(cur_node);
+	ptr_list->len--;
+	return;
+}
+
 void _ptr_list_free(struct _pointer_list *ptr_list)
 {
 	struct _list_node *node = NULL;
 	struct _list_node *tmp_node = NULL;
-	uint32_t i;
 
 	if (ptr_list == NULL)
 		return;
@@ -132,7 +168,7 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 	assert(count != NULL);
 
 	*array = NULL;
-	*count = ptr_list_len(ptr_list);
+	*count = _ptr_list_len(ptr_list);
 	if (*count == 0)
 		return 0;
 
@@ -140,7 +176,7 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 	if (*array == NULL)
 		return ENOMEM;
 
-	ptr_list_for_each(ptr_list, i, data) {
+	_ptr_list_for_each(ptr_list, i, data) {
 		(*array)[i] = data;
 	}
 	return 0;

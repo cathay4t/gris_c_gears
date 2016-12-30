@@ -16,8 +16,8 @@
  * Author: Gris Ge <fge@redhat.com>
  */
 
-#ifndef _LIBNVME_PTR_LIST_H_
-#define _LIBNVME_PTR_LIST_H_
+#ifndef _NVME_PTR_LIST_H_
+#define _NVME_PTR_LIST_H_
 
 #include <stdint.h>
 
@@ -33,6 +33,8 @@ struct _pointer_list *_ptr_list_new(void);
  */
 int _ptr_list_add(struct _pointer_list *ptr_list, void *data);
 
+void _ptr_list_del(struct _pointer_list *ptr_list, uint32_t index);
+
 uint32_t _ptr_list_len(struct _pointer_list *ptr_list);
 
 void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index);
@@ -47,8 +49,8 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 
 #define _ptr_list_for_each(l, i, d) \
 	for (i = 0; \
-	     (l != NULL) && (i < ptr_list_len(l)) && \
-	     (d = ptr_list_index(l, i)); \
+	     (l != NULL) && (i < _ptr_list_len(l)) && \
+	     (d = _ptr_list_index(l, i)); \
 	     ++i)
 
-#endif  /* End of _LIBNVME_PTR_LIST_H_  */
+#endif  /* End of _NVME_PTR_LIST_H_  */
