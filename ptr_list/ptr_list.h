@@ -16,8 +16,8 @@
  * Author: Gris Ge <fge@redhat.com>
  */
 
-#ifndef _NVME_PTR_LIST_H_
-#define _NVME_PTR_LIST_H_
+#ifndef _PTR_LIST_H_
+#define _PTR_LIST_H_
 
 #include <stdint.h>
 
@@ -47,10 +47,13 @@ void _ptr_list_free(struct _pointer_list *ptr_list);
 int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 		      uint32_t *count);
 
+/*
+ * _ptr_list_for_each will skip NULL data.
+ */
 #define _ptr_list_for_each(l, i, d) \
 	for (i = 0; \
 	     (l != NULL) && (i < _ptr_list_len(l)) && \
 	     (d = _ptr_list_index(l, i)); \
 	     ++i)
 
-#endif  /* End of _NVME_PTR_LIST_H_  */
+#endif  /* End of _PTR_LIST_H_  */
