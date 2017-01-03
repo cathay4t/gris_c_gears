@@ -29,6 +29,7 @@ struct _pointer_list;
 struct _pointer_list *_ptr_list_new(void);
 
 /*
+ * 'data' should not be NULL
  * Return ENOMEM if no memory
  */
 int _ptr_list_add(struct _pointer_list *ptr_list, void *data);

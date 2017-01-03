@@ -55,6 +55,7 @@ int _ptr_list_add(struct _pointer_list *ptr_list, void *data)
 	struct _list_node *node = NULL;
 
 	assert(ptr_list != NULL);
+	assert(data != NULL);
 
 	node = (struct _list_node *) malloc(sizeof(struct _list_node));
 	if (node == NULL)
@@ -94,7 +95,7 @@ void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index)
 	node = ptr_list->first_node;
 	while((i < index) && (node != NULL)) {
 		node = (struct _list_node *) node->next;
-		++i;
+		i++;
 	}
 	if (i == index)
 		return node->data;
