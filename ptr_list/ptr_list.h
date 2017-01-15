@@ -54,7 +54,7 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 #define _ptr_list_for_each(l, i, d) \
 	for (i = 0; \
 	     (l != NULL) && (i < _ptr_list_len(l)) && \
-	     (d = _ptr_list_index(l, i)); \
+	     ((d = _ptr_list_index(l, i)) || 1); \
 	     ++i)
 
 #endif  /* End of _PTR_LIST_H_  */

@@ -69,7 +69,7 @@ struct _hash_table *_hash_table_copy(struct _hash_table *h);
 	for (i = 0; \
 	     (h != NULL) && (key_list = _hash_table_key_list_get(h)) && \
 	     (key = _ptr_list_index(key_list, i)) && \
-	     (value = _hash_table_get(h, key)); \
+	     ((value = _hash_table_get(h, key) || 1)); \
 	     ++i)
 
 #define _hash_table_free_all(h, key_list, i, key, value, value_free_func) \
@@ -80,4 +80,3 @@ struct _hash_table *_hash_table_copy(struct _hash_table *h);
 	}while(0)
 
 #endif  /* End of _HASH_TABLE_H_ */
-
