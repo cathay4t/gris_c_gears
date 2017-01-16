@@ -25,15 +25,15 @@
 #include <assert.h>
 #include <errno.h>
 
-struct _list_node {
+struct _pointer_list_node {
 	void *data;
 	void *next;
 };
 
 struct _pointer_list {
-	struct _list_node *first_node;
+	struct _pointer_list_node *first_node;
 	uint32_t len;
-	struct _list_node *last_node;
+	struct _pointer_list_node *last_node;
 };
 
 struct _pointer_list *_ptr_list_new(void)
@@ -52,12 +52,12 @@ struct _pointer_list *_ptr_list_new(void)
 
 int _ptr_list_add(struct _pointer_list *ptr_list, void *data)
 {
-	struct _list_node *node = NULL;
+	struct _pointer_list_node *node = NULL;
 
 	assert(ptr_list != NULL);
-	assert(data != NULL);
 
-	node = (struct _list_node *) malloc(sizeof(struct _list_node));
+	node = (struct _pointer_list_node *)
+		malloc(sizeof(struct _pointer_list_node));
 	if (node == NULL)
 		return ENOMEM;
 
@@ -83,7 +83,7 @@ uint32_t _ptr_list_len(struct _pointer_list *ptr_list)
 void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index)
 {
 	uint32_t i = 0;
-	struct _list_node *node;
+	struct _pointer_list_node *node;
 
 	if ((ptr_list == NULL) || (ptr_list->len == 0) ||
 	    (ptr_list->len <= index))
@@ -94,7 +94,7 @@ void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index)
 
 	node = ptr_list->first_node;
 	while((i < index) && (node != NULL)) {
-		node = (struct _list_node *) node->next;
+		node = (struct _pointer_list_node *) node->next;
 		i++;
 	}
 	if (i == index)
@@ -105,9 +105,9 @@ void *_ptr_list_index(struct _pointer_list *ptr_list, uint32_t index)
 void _ptr_list_del(struct _pointer_list *ptr_list, uint32_t index)
 {
 	uint32_t i = 0;
-	struct _list_node *pre_node = NULL;
-	struct _list_node *cur_node = NULL;
-	struct _list_node *nxt_node = NULL;
+	struct _pointer_list_node *pre_node = NULL;
+	struct _pointer_list_node *cur_node = NULL;
+	struct _pointer_list_node *nxt_node = NULL;
 
 	if ((ptr_list == NULL) || (ptr_list->len == 0) ||
 	    (ptr_list->len <= index))
@@ -125,7 +125,7 @@ void _ptr_list_del(struct _pointer_list *ptr_list, uint32_t index)
 	} else {
 		pre_node = ptr_list->first_node;
 		while((i < index - 1) && (pre_node != NULL)) {
-			pre_node = (struct _list_node *) pre_node->next;
+			pre_node = (struct _pointer_list_node *) pre_node->next;
 			++i;
 		}
 		assert(i == index - 1);
@@ -141,8 +141,8 @@ void _ptr_list_del(struct _pointer_list *ptr_list, uint32_t index)
 
 void _ptr_list_free(struct _pointer_list *ptr_list)
 {
-	struct _list_node *node = NULL;
-	struct _list_node *tmp_node = NULL;
+	struct _pointer_list_node *node = NULL;
+	struct _pointer_list_node *tmp_node = NULL;
 
 	if (ptr_list == NULL)
 		return;
@@ -151,7 +151,7 @@ void _ptr_list_free(struct _pointer_list *ptr_list)
 
 	while(node != NULL) {
 		tmp_node = node;
-		node = (struct _list_node *) node->next;
+		node = (struct _pointer_list_node *) node->next;
 		free(tmp_node);
 	}
 
@@ -162,6 +162,7 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 		      uint32_t *count)
 {
 	uint32_t i = 0;
+	struct _pointer_list_node *n = NULL;
 	void *data = NULL;
 
 	assert(ptr_list != NULL);
@@ -177,8 +178,30 @@ int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 	if (*array == NULL)
 		return ENOMEM;
 
-	_ptr_list_for_each(ptr_list, i, data) {
+	_ptr_list_for_each(ptr_list, n, data) {
 		(*array)[i] = data;
+		i++;
 	}
 	return 0;
+}
+
+struct _pointer_list_node *_ptr_list_node_get(struct _pointer_list *ptr_list)
+{
+	if (ptr_list != NULL)
+		return ptr_list->first_node;
+	return NULL;
+}
+
+struct _pointer_list_node *_ptr_list_node_next(struct _pointer_list_node *node)
+{
+	if (node != NULL)
+		return node->next;
+	return NULL;
+}
+
+void *_ptr_list_node_data_get(struct _pointer_list_node *node)
+{
+	if (node != NULL)
+		return node->data;
+	return NULL;
 }

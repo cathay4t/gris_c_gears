@@ -23,6 +23,8 @@
 
 struct _pointer_list;
 
+struct _pointer_list_node;
+
 /*
  * Return NULL if no memory
  */
@@ -48,13 +50,18 @@ void _ptr_list_free(struct _pointer_list *ptr_list);
 int _ptr_list_2_array(struct _pointer_list *ptr_list, void ***array,
 		      uint32_t *count);
 
+struct _pointer_list_node *_ptr_list_node_get(struct _pointer_list *ptr_list);
+
+struct _pointer_list_node *_ptr_list_node_next(struct _pointer_list_node *node);
+
+void *_ptr_list_node_data_get(struct _pointer_list_node *node);
+
 /*
  * _ptr_list_for_each will skip NULL data.
  */
-#define _ptr_list_for_each(l, i, d) \
-	for (i = 0; \
-	     (l != NULL) && (i < _ptr_list_len(l)) && \
-	     ((d = _ptr_list_index(l, i)) || 1); \
-	     ++i)
+#define _ptr_list_for_each(l, n, d) \
+	for (n = _ptr_list_node_get(l); \
+	     (n != NULL) && ((d = _ptr_list_node_data_get(n)) || 1); \
+	     n = _ptr_list_node_next(n))
 
 #endif  /* End of _PTR_LIST_H_  */
