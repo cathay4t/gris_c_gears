@@ -20,22 +20,23 @@
 #define _HASH_TABLE_H_
 
 #include <stdint.h>
-
-#include "ptr_list.h"
+#include <stdbool.h>
 
 struct _hash_table;
 
 /*
  * Return NULL if no enough memory and errno will be set as ENOMEM.
+ * If 'value_free_func' is NULL, memory hold by value does not require manual
+ * free.
  */
-struct _hash_table *_hash_table_new(void);
+struct _hash_table *_hash_table_new(bool need_free_key,
+				    void (*value_free_func)(void *value));
 
 /*
- * The memory hold by 'key' will be copied. But memory hold by 'value' will
- * __not__ be copied.
- * Both key and value should not be NULL.
+ * The 'key' should not be NULL.
  * Fail when no enough memory, ENOMEM will be returned.
- * Fail when identical entry already exists, EEXIST will be returned.
+ * When identical entry already exists, old value will be freed by
+ * `value_free_func()`, old key will be freed if `need_free_key` is true.
  */
 int _hash_table_set(struct _hash_table *h, const char *key, void *value);
 
@@ -45,38 +46,12 @@ int _hash_table_set(struct _hash_table *h, const char *key, void *value);
 void *_hash_table_get(struct _hash_table *h, const char *key);
 
 /*
- * This function does not touch the memory used by 'value', make sure
- * you free it before invoke _hash_table_del().
+ * Memory used by key will be freed if `need_free_key` is true.
+ * Memory used by value will be freed by `value_free_func()`.
  * Return 0 if success. Return ESRCH if not found.
  */
 int _hash_table_del(struct _hash_table *h, const char *key);
 
-/*
- * Only free internal memory(including copied key memory).
- * The memory hold by value will be untouched.
- * Use _hash_table_free_all() macro when you want to free value memory as well.
- */
 void _hash_table_free(struct _hash_table *h);
-
-struct _pointer_list *_hash_table_key_list_get(struct _hash_table *h);
-
-struct _hash_table *_hash_table_copy(struct _hash_table *h);
-
-/*
- * _hash_table_for_each will skip NULL value and NULL key.
- */
-#define _hash_table_for_each(h, key_list, i, key, value) \
-	for (i = 0; \
-	     (h != NULL) && (key_list = _hash_table_key_list_get(h)) && \
-	     (key = _ptr_list_index(key_list, i)) && \
-	     ((value = _hash_table_get(h, key) || 1)); \
-	     ++i)
-
-#define _hash_table_free_all(h, key_list, i, key, value, value_free_func) \
-	do { \
-		_hash_table_for_each(h, key_list, i, key, value) \
-			value_free_func(value); \
-		_hash_table_free(h); \
-	}while(0)
 
 #endif  /* End of _HASH_TABLE_H_ */
