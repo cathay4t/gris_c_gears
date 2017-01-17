@@ -6283,18 +6283,23 @@ int main(void) {
 	int rc = EXIT_FAILURE;
 	struct _hash_table *h = NULL;
 	size_t i = 0;
-//	uint32_t j = 0;
 	const char *value = NULL;
 	const char *key = NULL;
 	int tmp_rc = 0;
+	const char **keys = NULL;
+	const char **values = NULL;
+	unsigned int count = 0;
+	unsigned int j = 0;
 
-	h = _hash_table_new(false, NULL);
+	h = _hash_table_new(true, free);
 	if (h == NULL)
 		goto out;
 
 	for (i = 0; i < sizeof(data)/sizeof(data[0]); ++i) {
-		key = data[i];
-		value = data[i + 1];
+		key = strdup(data[i]);
+		value = strdup(data[i + 1]);
+		if ((key == NULL) || (value == NULL))
+			goto nomem;
 		i++;
 		tmp_rc = _hash_table_set(h, key, (void *) value);
 		if (tmp_rc != 0) {
@@ -6302,10 +6307,18 @@ int main(void) {
 			goto out;
 		}
 	}
-	printf("haha\n");
 
-//	_hash_table_for_each(h, j, key, value)
-//		printf("key: '%s', value '%s'\n", key, value);
+	tmp_rc = _hash_table_items_get(h, &keys, (void ***) &values, &count);
+	if (tmp_rc != 0) {
+		printf("_hash_table_items_get() failed %d\n", tmp_rc);
+		goto out;
+	}
+
+	for (j = 0; j < count; ++j)
+		printf("key: '%s', value '%s'\n", keys[j], values[j]);
+
+	free(keys);
+	free(values);
 
 	printf("deleting key '105b'\n");
 	_hash_table_del(h, "105b");
@@ -6313,19 +6326,28 @@ int main(void) {
 	assert(value == NULL);
 //	_hash_table_for_each(h, j, key, value)
 //		printf("key: '%s', value '%s'\n", key, value);
-	printf("adding key 105b: 'HAHA'\n");
-	tmp_rc = _hash_table_set(h, "105b", "HAHA" );
-	if (tmp_rc != 0) {
-		printf("_hash_table_set() failed %d\n", tmp_rc);
-		goto out;
+	printf("readding everything'\n");
+	for (i = 0; i < sizeof(data)/sizeof(data[0]); ++i) {
+		key = strdup(data[i]);
+		value = strdup(data[i + 1]);
+		if ((key == NULL) || (value == NULL))
+			goto nomem;
+		i++;
+		tmp_rc = _hash_table_set(h, key, (void *) value);
+		if (tmp_rc != 0) {
+			printf("_hash_table_set() failed %d\n", tmp_rc);
+			goto out;
+		}
 	}
 	printf("key 105b: '%s'\n", (char *) _hash_table_get(h, "105b"));
-//	_hash_table_for_each(h, j, key, value)
-//		printf("key: '%s', value '%s'\n", key, value);
 
 	rc = EXIT_SUCCESS;
 
 out:
 	_hash_table_free(h);
 	return rc;
+
+nomem:
+	printf("no enough memory\n");
+	goto out;
 }

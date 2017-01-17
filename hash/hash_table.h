@@ -54,4 +54,14 @@ int _hash_table_del(struct _hash_table *h, const char *key);
 
 void _hash_table_free(struct _hash_table *h);
 
+/*
+ * The memory used by `keys` should be freed via `free(keys)`.
+ * The memory used by `values` should be freed via `free(values)`.
+ * The memory used by key and value are hold by the hash table, will be freed
+ * when _hash_table_del().
+ * Return 0 if success. Return ENOMEM if no enough memory.
+ */
+int _hash_table_items_get(struct _hash_table *h, const char ***keys,
+			  void ***values, unsigned int *count);
+
 #endif  /* End of _HASH_TABLE_H_ */

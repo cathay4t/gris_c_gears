@@ -161,3 +161,52 @@ void _hash_table_free(struct _hash_table *h)
 
 	free(h);
 }
+
+int _hash_table_items_get(struct _hash_table *h, const char ***keys,
+			  void ***values, unsigned int *count)
+{
+	unsigned int i = 0;
+	struct __entry *e = NULL;
+
+	assert(h != NULL);
+	assert(keys != NULL);
+	assert(values != NULL);
+	assert(count != NULL);
+
+	*keys = NULL;
+	*values = NULL;
+
+	*count = HASH_COUNT(h->head);
+
+	*keys = (const char **) malloc(sizeof(char *) * (*count));
+	if (*keys == NULL)
+		goto nomem;
+
+	*values = (void **) malloc(sizeof(void *) * (*count));
+	if (*values == NULL) {
+		free(*keys);
+		goto nomem;
+	}
+
+	/* initialize the array to all NULL */
+	for (i = 0; i < *count; ++i) {
+		(*keys)[i] = NULL;
+		(*values)[i] = NULL;
+	}
+
+	i = 0;
+	for (e = h->head; (e != NULL) && (i < *count); e = e->hh.next) {
+		(*keys)[i] = e->key;
+		(*values)[i] = e->value;
+		i++;
+	}
+
+	return 0;
+
+nomem:
+	*keys = NULL;
+	*values = NULL;
+	*count = 0;
+	errno = ENOMEM;
+	return errno;
+}
